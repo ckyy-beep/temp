@@ -65,7 +65,17 @@ public class User {
         borrowingBooks.add(book);
     }
 
-    public void removeBorrowBook(Book book) {
-        borrowingBooks.remove(book);
+//    public void returnBorrowedBook(Book book) {
+//        borrowingBooks.remove(book);
+//    }
+
+    public boolean returnBorrowedBook(Book book) {
+        if (borrowingBooks.contains(book)) {
+            borrowingBooks.remove(book);
+            book.setInventory(book.getInventory() + 1);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

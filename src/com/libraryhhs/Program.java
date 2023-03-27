@@ -91,6 +91,7 @@ public class Program {
 
                 case 2:
                     // code to search for a book
+                    scanner.nextLine();
                     System.out.println();
                     System.out.println("Please select an option:");
                     System.out.println("1. Search book by title");
@@ -134,6 +135,7 @@ public class Program {
                                 System.out.println();
                                 break;
                             }
+                            break;
 
                         case 2:
                             // code to search for a book by author.
@@ -156,6 +158,7 @@ public class Program {
                                 System.out.println();
                                 break;
                             }
+                            break;
                         default:
                             System.out.println();
                             System.out.println("Invalid option.");
@@ -175,6 +178,7 @@ public class Program {
                         break;
                     }
 
+                    System.out.println("Found you.");
                     System.out.println("Please enter the book name you would like to borrow: ");
                     String bookName = scanner.nextLine();
                     Book book = hhs.findBookByName(bookName);
@@ -226,7 +230,7 @@ public class Program {
 
                     // Save the changes to the Excel file
                     file.close();
-                    FileOutputStream outFile =new FileOutputStream(new File("resources/Library.xlsx"));
+                    FileOutputStream outFile =new FileOutputStream("resources/Library.xlsx");
                     workbook.write(outFile);
                     outFile.close();
 
@@ -248,6 +252,85 @@ public class Program {
 
                 case 4:
                     // code to return a book
+                    scanner.nextLine();
+                    System.out.println("Please enter your user ID: ");
+                    String userIdReturn = scanner.nextLine();
+                    User userReturn = hhs.findUserByName(userIdReturn);
+
+                    if (userReturn == null) {
+                        System.out.println("User not found.");
+                        System.out.println();
+                        break;
+                    }
+
+                    System.out.println("Found you.");
+                    System.out.println("Please enter the book name you would like to return: ");
+                    String bookNameReturn = scanner.nextLine();
+                    Book bookReturn = hhs.findBookByName(bookNameReturn);
+
+                    if (bookReturn == null) {
+                        System.out.println("Book not found.");
+                        System.out.println();
+                        break;
+                    }
+
+                    if (!userReturn.returnBorrowedBook(bookReturn)) {
+                        System.out.println("You have not borrowed this book.");
+                        System.out.println();
+                        break;
+                    }
+
+                    bookReturn.setInventory(bookReturn.getInventory() + 1);
+
+                    // Get the workbook object for the Excel file
+                    FileInputStream file2 = new FileInputStream("resources/Library.xlsx");
+                    XSSFWorkbook workbook2 = null;
+                    try {
+                        workbook = new XSSFWorkbook(file2);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    XSSFSheet sheet2 = workbook.getSheet("Sheet1");
+
+                    // Find the row for the book to be returned
+                    DataFormatter formatter2 = new DataFormatter();
+                    int rowIndex2 = -1;
+                    for (int i = 1; i <= sheet2.getLastRowNum(); i++) {
+                        Row row = sheet2.getRow(i);
+                        if (formatter2.formatCellValue(row.getCell(0)).equals(bookNameReturn)) {
+                            rowIndex = row.getRowNum();
+                            break;
+                        }
+                    }
+
+                    // Update the inventory of the book
+                    if (rowIndex2 >= 0) {
+                        Row row = sheet2.getRow(rowIndex2);
+                        int inventory = (int) row.getCell(10).getNumericCellValue();
+                        row.getCell(10).setCellValue(inventory + 1);
+                    }
+
+                    // Save the changes to the Excel file
+                    file2.close();
+                    FileOutputStream outFile2 =new FileOutputStream(new File("resources/Library.xlsx"));
+                    workbook.write(outFile2);
+                    outFile2.close();
+
+                    System.out.println("Book returned successfully.");
+                    System.out.println();
+
+                    System.out.println("Back to menu? (y/n)");
+                    System.out.print("Answer: ");
+                    answer = scanner.nextLine();
+
+                    if (answer.equals("n")) {
+                        running = false;
+                        printExitMessage();
+                    } else {
+                        System.out.println();
+                        break;
+                    }
                     break;
                 case 5:
                     // code for library options

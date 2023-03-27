@@ -111,13 +111,11 @@ public class Book extends LibraryItem implements Borrowable {
         this.inventory = inventory;
     }
 
-
-    // Override the toString() method to print the object's properties
-    @Override
-    public String toString() {
-        return "Book [title=" + title + ", author=" + author + ", subtitle=" + subtitle + ", ISBN=" + Isbn
-                + ", publisher=" + publisher + ", publicationYear=" + year + ", publicationMonth="
-                + publicationMonth + ", publicationDate=" + publicationDay + ", genre=" + genre + ", language="
-                + language + ", inventory=" + inventory + "]";
-    }
+//    @Override
+//    public String toString() {
+//        return "Book [title=" + title + ", author=" + author + ", subtitle=" + subtitle + ", ISBN=" + Isbn
+//                + ", publisher=" + publisher + ", publicationYear=" + year + ", publicationMonth="
+//                + publicationMonth + ", publicationDate=" + publicationDay + ", genre=" + genre + ", language="
+//                + language + ", inventory=" + inventory + "]";
+//    }
 }
