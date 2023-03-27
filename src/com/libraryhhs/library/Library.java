@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class Library {
     private String libraryName;
-    private ArrayList<Book> catalog;
+    private static ArrayList<Book> catalog;
     private ArrayList<User> users;
 
     public Library(String libraryName) {
@@ -68,6 +68,7 @@ public class Library {
         }
         if (!bookFound) {
             System.out.println("No books found containing \"" + title + "\" in the title.");
+            System.out.println();
         }
     }
 
@@ -81,6 +82,7 @@ public class Library {
         }
         if (!bookFound) {
             System.out.println("No books found containing \"" + author + "\" in the title.");
+            System.out.println();
         }
     }
 
@@ -195,7 +197,7 @@ public class Library {
         return null;
     }
 
-    public Book findBookByName(String bookName) {
+    public static Book findBookByName(String bookName) {
         for (Book book : catalog) {
             if (book.getTitle().equals(bookName)) {
                 return book;

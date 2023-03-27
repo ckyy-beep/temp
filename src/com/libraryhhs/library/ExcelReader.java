@@ -102,14 +102,18 @@ public class ExcelReader {
                 String lastname = formatter.formatCellValue(currentRow.getCell(2));
                 String email = formatter.formatCellValue(currentRow.getCell(3));
                 String phonenumber = formatter.formatCellValue(currentRow.getCell(4));
-
-//                System.out.println("UserId              : " + userID);
-//                System.out.println("firstname           : " + firstname);
-//                System.out.println("lastname            : " + lastname);
-//                System.out.println("email               : " + email);
-//                System.out.println("phonenumber         : " + phonenumber);
+                String booksBorrowed = formatter.formatCellValue(currentRow.getCell(5));
 
                 User user = new User(userID, firstname, lastname, email, phonenumber);
+                // Add books borrowed by the user to the User object
+                if (!booksBorrowed.isEmpty()) {
+                    String[] bookNames = booksBorrowed.split(",");
+                    for (String bookName : bookNames) {
+                        Book book = Library.findBookByName(bookName.trim()); // get the existing book object
+                        user.addBorrowBook(book);
+                    }
+                }
+
                 users.add(user);
 
             }

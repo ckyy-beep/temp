@@ -4,12 +4,15 @@ import com.libraryhhs.item.Book;
 import com.libraryhhs.library.ExcelReader;
 import com.libraryhhs.library.Library;
 import com.libraryhhs.user.User;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import javax.xml.crypto.Data;
 import java.io.*;
+import java.util.Formatter;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -28,7 +31,7 @@ public class Program {
         String fileName = "resources/Library.xlsx";
         String sheetName = "Sheet1";
         excelReader.readExcelFile(fileName, sheetName, hhs.getCatalog());
-        excelReader.readExcelFileMembers("resources/Members.xlsx", "Members", hhs.getUsers());
+        excelReader.readExcelFileMembers("resources/Members.xlsx", "Sheet1", hhs.getUsers());
 
         //excelReader.writeExcelFile(fileName, sheetName, hhs.getCatalog());
 
@@ -55,6 +58,7 @@ public class Program {
                 option = scanner.nextInt();
             } catch (InputMismatchException e) {
                 // User entered a non-integer value
+                System.out.println();
                 System.out.println("Invalid input. Please enter a number.");
                 System.out.println();
                 scanner.next(); // Clear the scanner buffer
@@ -66,7 +70,17 @@ public class Program {
                     // code to display list of books
                     hhs.showCatalog();
                     System.out.print("Which book would you like information on? Book number: ");
-                    int bookNumber = scanner.nextInt(); scanner.nextLine();
+                    int bookNumber;
+                    try {
+                        bookNumber = scanner.nextInt();
+                    } catch (InputMismatchException e) {
+                        System.out.println();
+                        System.out.println("Invalid input.");
+                        System.out.println();
+                        scanner.next();
+                        continue;
+                    }
+                    scanner.nextLine();
                     System.out.println();
 
                     if (bookNumber - 1 >= hhs.getCatalog().size()) {
@@ -106,10 +120,18 @@ public class Program {
                         option2 = scanner.nextInt();
                     } catch (InputMismatchException e) {
                         // User entered a non-integer value
-                        System.out.println("Invalid input. Please enter a number.");
                         System.out.println();
-                        scanner.next(); // Clear the scanner buffer
-                        continue; // Go back to the start of the loop
+                        System.out.println("Invalid input.");
+                        System.out.println();
+                        scanner.next();
+                        break;
+                    }
+
+                    if (option2 < 1 || option2 > 2) {
+                        System.out.println();
+                        System.out.println("Invalid.");
+                        System.out.println();
+                        break;
                     }
 
                     switch (option2) {
@@ -129,7 +151,6 @@ public class Program {
                             answer = scanner.nextLine();
 
                             if (answer.equals("n")) {
-                                running = false;
                                 printExitMessage();
                             } else if (answer.equals("y")) {
                                 System.out.println();
@@ -137,6 +158,7 @@ public class Program {
                             } else {
                                 System.out.println("Invalid input. Please enter 'y' or 'n'.");
                             }
+                            running = false;
                             break;
 
                         case 2:
@@ -154,7 +176,6 @@ public class Program {
                             answer = scanner.nextLine();
 
                             if (answer.equals("n")) {
-                                running = false;
                                 printExitMessage();
                             } else if (answer.equals("y")) {
                                 System.out.println();
@@ -162,12 +183,9 @@ public class Program {
                             } else {
                                 System.out.println("Invalid input. Please enter 'y' or 'n'.");
                             }
-                            break;
-                        default:
-                            System.out.println();
-                            System.out.println("Invalid option.");
-                            System.out.println();
+                            running = false;
                     }
+                    break;
 
                 case 3:
                     // code to borrow a book
@@ -205,7 +223,7 @@ public class Program {
 
                     // Get the workbook object for the Excel file
                     FileInputStream file = new FileInputStream("resources/Library.xlsx");
-                    XSSFWorkbook workbook = null;
+                    XSSFWorkbook workbook;
                     try {
                         workbook = new XSSFWorkbook(file);
                     } catch (IOException e) {
@@ -234,12 +252,62 @@ public class Program {
 
                     // Save the changes to the Excel file
                     file.close();
-                    FileOutputStream outFile =new FileOutputStream("resources/Library.xlsx");
+                    FileOutputStream outFile = new FileOutputStream("resources/Library.xlsx");
                     workbook.write(outFile);
                     outFile.close();
 
                     System.out.println("Book borrowed successfully.");
                     System.out.println();
+
+                    // Get the workbook object for the Excel file
+                    FileInputStream file8 = new FileInputStream("resources/Members.xlsx");
+                    XSSFWorkbook workbook8;
+                    try {
+                        workbook8 = new XSSFWorkbook(file8);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    XSSFSheet sheet3 = workbook8.getSheet("Sheet1"); // Get the "Sheet1" sheet from the Members.xlsx file
+
+                    // Find the row for the user
+                    int rowIndex3 = -1;
+                    for (int i = 1; i <= sheet3.getLastRowNum(); i++) {
+                        Row row = sheet3.getRow(i);
+                        if (formatter.formatCellValue(row.getCell(0)).equals(userId)) {
+                            rowIndex3 = row.getRowNum();
+                            break;
+                        }
+                    }
+
+                    // Update the borrowed books for the user
+                    if (rowIndex3 >= 0) {
+                        Row row3 = sheet3.getRow(rowIndex3);
+                        if (row3 != null) { // check if row3 is null
+                            String borrowedBooks = formatter.formatCellValue(row3.getCell(5));
+                            if (borrowedBooks.isEmpty()) {
+                                borrowedBooks = bookName;
+                            } else {
+                                borrowedBooks += "," + bookName;
+                            }
+                            Cell cell = row3.getCell(5);
+                            if (cell == null) {
+                                cell = row3.createCell(5);
+                            }
+                            cell.setCellValue(borrowedBooks);
+                            row3.getCell(5).setCellValue(borrowedBooks);
+                        } else {
+                            throw new RuntimeException("Row not found.");
+                            // or print an error message instead of throwing an exception
+                            // System.err.println("Error: Row not found.");
+                        }
+                    }
+
+                    // Save the changes to the Excel file
+                    file8.close();
+                    FileOutputStream outFile2 = new FileOutputStream("resources/Members.xlsx");
+                    workbook8.write(outFile2);
+                    outFile.close();
 
                     System.out.println("Back to menu? (y/n)");
                     System.out.print("Answer: ");
@@ -288,14 +356,14 @@ public class Program {
 
                     // Get the workbook object for the Excel file
                     FileInputStream file2 = new FileInputStream("resources/Library.xlsx");
-                    XSSFWorkbook workbook2 = null;
+                    XSSFWorkbook workbook2;
                     try {
-                        workbook = new XSSFWorkbook(file2);
+                        workbook2 = new XSSFWorkbook(file2);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
 
-                    XSSFSheet sheet2 = workbook.getSheet("Sheet1");
+                    XSSFSheet sheet2 = workbook2.getSheet("Sheet1");
 
                     // Find the row for the book to be returned
                     DataFormatter formatter2 = new DataFormatter();
@@ -303,23 +371,68 @@ public class Program {
                     for (int i = 1; i <= sheet2.getLastRowNum(); i++) {
                         Row row = sheet2.getRow(i);
                         if (formatter2.formatCellValue(row.getCell(0)).equals(bookNameReturn)) {
-                            rowIndex = row.getRowNum();
+                            rowIndex2 = row.getRowNum();
                             break;
                         }
                     }
 
                     // Update the inventory of the book
                     if (rowIndex2 >= 0) {
-                        Row row = sheet2.getRow(rowIndex2);
-                        int inventory = (int) row.getCell(10).getNumericCellValue();
-                        row.getCell(10).setCellValue(inventory + 1);
+                        Row row2 = sheet2.getRow(rowIndex2);
+                        int inventory = (int) row2.getCell(10).getNumericCellValue();
+                        row2.getCell(10).setCellValue(inventory + 1);
                     }
 
                     // Save the changes to the Excel file
                     file2.close();
-                    FileOutputStream outFile2 =new FileOutputStream(new File("resources/Library.xlsx"));
-                    workbook.write(outFile2);
-                    outFile2.close();
+                    FileOutputStream outFile3 = new FileOutputStream("resources/Library.xlsx");
+                    workbook2.write(outFile3);
+                    outFile3.close();
+
+                    // Get the workbook object for the Excel file
+                    FileInputStream file9 = new FileInputStream("resources/Members.xlsx");
+                    XSSFWorkbook workbook9;
+                    try {
+                        workbook9 = new XSSFWorkbook(file9);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    XSSFSheet sheet4 = workbook9.getSheet("Sheet1");
+
+                    // Find the row for the user
+                    int rowIndex4 = -1;
+                    for (int i = 1; i <= sheet4.getLastRowNum(); i++) {
+                        Row row4 = sheet4.getRow(i);
+                        if (formatter2.formatCellValue(row4.getCell(0)).equals(userIdReturn)) {
+                            rowIndex4 = row4.getRowNum();
+                            break;
+                        }
+                    }
+
+                    // Update the borrowed books for the user
+                    if (rowIndex4 >= 0) {
+                        Row row4 = sheet4.getRow(rowIndex4);
+                        if (row4 != null) { // check if row2 is null
+                            DataFormatter formatter4 = new DataFormatter();
+                            String borrowedBooks = formatter4.formatCellValue(row4.getCell(5));
+                            if (borrowedBooks.contains(bookNameReturn)) {
+                                borrowedBooks = borrowedBooks.replace(bookNameReturn, "").replaceAll(",,", ",");
+                                borrowedBooks = borrowedBooks.replaceAll(",$", "").replaceAll("^,", "");
+                                row4.getCell(5).setCellValue(borrowedBooks);
+                            }
+                        } else {
+                            throw new RuntimeException("Row not found.");
+                            // or print an error message instead of throwing an exception
+                            // System.err.println("Error: Row not found.");
+                        }
+                    }
+
+                    // Save the changes to the Excel file
+                    file9.close();
+                    FileOutputStream outFile1 = new FileOutputStream("resources/Members.xlsx");
+                    workbook9.write(outFile1);
+                    outFile1.close();
 
                     System.out.println("Book returned successfully.");
                     System.out.println();
@@ -506,6 +619,7 @@ public class Program {
                 default:
                     System.out.println();
                     System.out.println("Invalid option. Please try again.");
+                    System.out.println();
             }
         }
 
