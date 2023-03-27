@@ -131,9 +131,10 @@ public class Program {
                             if (answer.equals("n")) {
                                 running = false;
                                 printExitMessage();
-                            } else {
+                            } else if (answer.equals("y")) {
                                 System.out.println();
-                                break;
+                            } else {
+                                System.out.println("Invalid input. Please enter 'y' or 'n'.");
                             }
                             break;
 
