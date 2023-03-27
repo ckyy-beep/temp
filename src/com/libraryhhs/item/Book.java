@@ -1,6 +1,6 @@
 package com.libraryhhs.item;
 
-import com.libraryhhs.library.User;
+import com.libraryhhs.user.User;
 
 public class Book extends LibraryItem implements Borrowable {
     private String subtitle;

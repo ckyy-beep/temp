@@ -1,7 +1,7 @@
 package com.libraryhhs.library;
 
 import com.libraryhhs.item.Book;
-import com.libraryhhs.library.User;
+import com.libraryhhs.user.User;
 
 import java.time.LocalDate;
 

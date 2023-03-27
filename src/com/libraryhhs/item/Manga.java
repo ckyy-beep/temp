@@ -1,6 +1,6 @@
 package com.libraryhhs.item;
 
-import com.libraryhhs.library.User;
+import com.libraryhhs.user.User;
 
 public class Manga extends LibraryItem implements Borrowable {
     private boolean borrowed;

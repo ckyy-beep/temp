@@ -1,8 +1,15 @@
 package com.libraryhhs;
 
+import com.libraryhhs.item.Book;
 import com.libraryhhs.library.ExcelReader;
 import com.libraryhhs.library.Library;
+import com.libraryhhs.user.User;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.*;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -12,7 +19,7 @@ public class Program {
         System.out.println("Thank you for using the Library Management System!");
     }
 
-    public void start() {
+    public void start() throws IOException {
 
         Scanner scanner = new Scanner(System.in);
         ExcelReader excelReader = new ExcelReader();
@@ -21,6 +28,7 @@ public class Program {
         String fileName = "resources/Library.xlsx";
         String sheetName = "Sheet1";
         excelReader.readExcelFile(fileName, sheetName, hhs.getCatalog());
+        excelReader.readExcelFileMembers("resources/Members.xlsx", "Members", hhs.getUsers());
 
         //excelReader.writeExcelFile(fileName, sheetName, hhs.getCatalog());
 
@@ -148,21 +156,108 @@ public class Program {
                                 System.out.println();
                                 break;
                             }
+                        default:
+                            System.out.println();
+                            System.out.println("Invalid option.");
+                            System.out.println();
                     }
 
                 case 3:
                     // code to borrow a book
+                    scanner.nextLine();
+                    System.out.println("Please enter your user ID: ");
+                    String userId = scanner.nextLine();
+                    User user = hhs.findUserByName(userId);
+
+                    if (user == null) {
+                        System.out.println("User not found.");
+                        System.out.println();
+                        break;
+                    }
+
+                    System.out.println("Please enter the book name you would like to borrow: ");
+                    String bookName = scanner.nextLine();
+                    Book book = hhs.findBookByName(bookName);
+
+                    if (book == null) {
+                        System.out.println("Book not found.");
+                        System.out.println();
+                        break;
+                    }
+
+                    if (book.getInventory() < 1) {
+                        System.out.println("The book is not available for borrowing at this time.");
+                        System.out.println();
+                        break;
+                    }
+
+                    //book.setAvailable(false);
+                    user.addBorrowBook(book);
+                    book.setInventory(book.getInventory() - 1);
+
+                    // Get the workbook object for the Excel file
+                    FileInputStream file = new FileInputStream("resources/Library.xlsx");
+                    XSSFWorkbook workbook = null;
+                    try {
+                        workbook = new XSSFWorkbook(file);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    XSSFSheet sheet = workbook.getSheet("Sheet1");
+
+                    // Find the row for the book to be borrowed
+                    DataFormatter formatter = new DataFormatter();
+                    int rowIndex = -1;
+                    for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                        Row row = sheet.getRow(i);
+                        if (formatter.formatCellValue(row.getCell(0)).equals(bookName)) {
+                            rowIndex = row.getRowNum();
+                            break;
+                        }
+                    }
+
+                    // Update the inventory of the book
+                    if (rowIndex >= 0) {
+                        Row row = sheet.getRow(rowIndex);
+                        int inventory = (int) row.getCell(10).getNumericCellValue();
+                        row.getCell(10).setCellValue(inventory - 1);
+                    }
+
+                    // Save the changes to the Excel file
+                    file.close();
+                    FileOutputStream outFile =new FileOutputStream(new File("resources/Library.xlsx"));
+                    workbook.write(outFile);
+                    outFile.close();
+
+                    System.out.println("Book borrowed successfully.");
+                    System.out.println();
+
+                    System.out.println("Back to menu? (y/n)");
+                    System.out.print("Answer: ");
+                    answer = scanner.nextLine();
+
+                    if (answer.equals("n")) {
+                        running = false;
+                        printExitMessage();
+                    } else {
+                        System.out.println();
+                        break;
+                    }
                     break;
+
                 case 4:
                     // code to return a book
                     break;
                 case 5:
+                    // code for library options
                     System.out.println("Library options.");
                     System.out.println("Please select an option:");
                     System.out.println("1. Add book");
-                    System.out.println("2. Remove book");
+                    System.out.println("2. Remove book (in production)");
                     System.out.println("3. Add user");
-                    System.out.println("4. Remove user");
+                    System.out.println("4. Remove user (in production)");
+                    System.out.println("5. Back to menu");
 
                     System.out.println();
                     System.out.print("Option: ");
@@ -182,17 +277,48 @@ public class Program {
                     switch (option3) {
 
                         case 1:
-                            // code to search for a book by title.
+                            // code to add a book
                             scanner.nextLine();
-                            System.out.println("What book are you looking for? ");
-                            System.out.print("Book: ");
-                            String bookName = scanner.nextLine();
+                            System.out.print("The title of the Book: ");
+                            String title = scanner.nextLine();
+                            System.out.println();
+                            System.out.print("The author's name: ");
+                            String author = scanner.nextLine();
+                            System.out.println();
+                            System.out.print("Subtitle (press enter if none): ");
+                            String subtitle = scanner.nextLine();
+                            System.out.println();
+                            System.out.print("ISBN: ");
+                            String isbn = scanner.nextLine();
+                            System.out.println();
+                            System.out.print("Published by: ");
+                            String publisher = scanner.nextLine();
+                            System.out.println();
+                            System.out.print("Published in year : ");
+                            String publicationYear = scanner.nextLine();
+                            System.out.println();
+                            System.out.print("Published in month: ");
+                            String publicationMonth = scanner.nextLine();
+                            System.out.println();
+                            System.out.print("Published on day: ");
+                            String publicationDay = scanner.nextLine();
+                            System.out.println();
+                            System.out.print("Book genre: ");
+                            String genre = scanner.nextLine();
+                            System.out.println();
+                            System.out.print("Book is in language: ");
+                            String language = scanner.nextLine();
+                            System.out.println();
+                            System.out.print("Inventory count: ");
+                            int inventory = scanner.nextInt();
                             System.out.println();
 
-                            hhs.searchBookByTitle(bookName);
+                            book = new Book(title, author, subtitle, isbn, publisher, publicationYear, publicationMonth, publicationDay, genre, language, inventory);
+                            hhs.addBook(book);
 
                             System.out.println("Back to menu? (y/n)");
                             System.out.print("Answer: ");
+                            scanner.nextLine();
                             answer = scanner.nextLine();
 
                             if (answer.equals("n")) {
@@ -208,10 +334,10 @@ public class Program {
                             scanner.nextLine();
                             System.out.println("Which author's books are you looking for? ");
                             System.out.print("Author: ");
-                            String author = scanner.nextLine();
+                            String rrr = scanner.nextLine();
                             System.out.println();
 
-                            hhs.searchBookByAuthor(author);
+                            hhs.searchBookByAuthor(rrr);
 
                             System.out.println("Back to menu? (y/n)");
                             System.out.print("Answer: ");
@@ -225,14 +351,26 @@ public class Program {
                                 continue;
                             }
                         case 3:
-                            // code to search for a book by author.
+                            // code to add a user
                             scanner.nextLine();
-                            System.out.println("Which author's books are you looking for? ");
-                            System.out.print("Author: ");
-                            author = scanner.nextLine();
+                            System.out.print("Enter userID: ");
+                            String userID = scanner.nextLine();
+                            System.out.println();
+                            System.out.print("Enter firstname: ");
+                            String firstname = scanner.nextLine();
+                            System.out.println();
+                            System.out.print("Enter lastname: ");
+                            String lastname = scanner.nextLine();
+                            System.out.println();
+                            System.out.print("Enter email address: ");
+                            String email = scanner.nextLine();
+                            System.out.println();
+                            System.out.print("Enter phone number: ");
+                            String phoneNumber = scanner.nextLine();
                             System.out.println();
 
-                            hhs.searchBookByAuthor(author);
+                            user = new User(userID, firstname, lastname, email, phoneNumber);
+                            hhs.addUser(user);
 
                             System.out.println("Back to menu? (y/n)");
                             System.out.print("Answer: ");
@@ -266,12 +404,18 @@ public class Program {
                                 System.out.println();
                                 continue;
                             }
+                        case 5:
+                            continue;
+                        default:
+                            System.out.println();
+                            System.out.println("Invalid option. Please try again.");
                     }
 
                 case 6:
                     running = false;
                     printExitMessage();
                     break;
+
                 default:
                     System.out.println();
                     System.out.println("Invalid option. Please try again.");
@@ -281,4 +425,5 @@ public class Program {
         scanner.close();
 
     }
+
 }

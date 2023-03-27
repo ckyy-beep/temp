@@ -1,6 +1,6 @@
 package com.libraryhhs.item;
 
-import com.libraryhhs.library.User;
+import com.libraryhhs.user.User;
 
 public interface Borrowable {
     void borrow(User user);

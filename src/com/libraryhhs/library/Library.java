@@ -1,7 +1,15 @@
 package com.libraryhhs.library;
 
 import com.libraryhhs.item.Book;
+import com.libraryhhs.user.User;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Library {
@@ -23,17 +31,10 @@ public class Library {
         return libraryName;
     }
 
-    public void addBook(Book book) {
-        catalog.add(book);
-    }
-
     public ArrayList<Book> getCatalog() {
         return catalog;
     }
-
-    public void addUser(User user) {
-        users.add(user);
-    }
+    public ArrayList<User> getUsers() {return users;}
 
     public void removeBook(Book book) {
         catalog.remove(book);
@@ -46,6 +47,13 @@ public class Library {
     public void showCatalog() {
         for (int i = 0; i < catalog.size(); i++) {
             System.out.printf("%3d. %s\n", i + 1, catalog.get(i).getTitle());
+        }
+        System.out.println();
+    }
+
+    public void showUsers() {
+        for (int i = 0; i < users.size(); i++) {
+            System.out.printf("%3d. %20s %20s %20s\n", i + 1, users.get(i).getUserId(), users.get(i).getFirstName(), users.get(i).getLastName());
         }
         System.out.println();
     }
@@ -75,6 +83,127 @@ public class Library {
             System.out.println("No books found containing \"" + author + "\" in the title.");
         }
     }
+
+    public void addBook(Book book) {
+        catalog.add(book);
+
+        try {
+            // open the existing workbook
+            FileInputStream inputStream = new FileInputStream("resources/Library.xlsx");
+            XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
+
+            // get the existing sheet or create a new one
+            Sheet sheet = workbook.getSheet("Sheet1");
+            if (sheet == null) {
+                sheet = workbook.createSheet("Sheet1");
+            }
+
+            // add the new user to the end of the sheet
+            Row row = sheet.createRow(sheet.getLastRowNum() + 1);
+
+            Cell cell = row.createCell(0);
+            cell.setCellValue(book.getTitle());
+
+            cell = row.createCell(1);
+            cell.setCellValue(book.getAuthor());
+
+            cell = row.createCell(2);
+            cell.setCellValue(book.getSubtitle());
+
+            cell = row.createCell(3);
+            cell.setCellValue(book.getIsbn());
+
+            cell = row.createCell(4);
+            cell.setCellValue(book.getPublisher());
+
+            cell = row.createCell(5);
+            cell.setCellValue(book.getPublicationYear());
+
+            cell = row.createCell(6);
+            cell.setCellValue(book.getPublicationMonth());
+
+            cell = row.createCell(7);
+            cell.setCellValue(book.getPublicationDay());
+
+            cell = row.createCell(8);
+            cell.setCellValue(book.getGenre());
+
+            cell = row.createCell(9);
+            cell.setCellValue(book.getLanguage());
+
+            cell = row.createCell(10);
+            cell.setCellValue(book.getInventory());
+
+            // write the updated workbook back to the file
+            FileOutputStream outputStream = new FileOutputStream("resources/Library.xlsx");
+            workbook.write(outputStream);
+            workbook.close();
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addUser(User user) {
+        users.add(user);
+
+        try {
+            // open the existing workbook
+            FileInputStream inputStream = new FileInputStream("resources/Members.xlsx");
+            XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
+
+            // get the existing sheet or create a new one
+            Sheet sheet = workbook.getSheet("Members");
+            if (sheet == null) {
+                sheet = workbook.createSheet("Members");
+            }
+
+            // add the new user to the end of the sheet
+            Row row = sheet.createRow(sheet.getLastRowNum() + 1);
+
+            Cell cell = row.createCell(0);
+            cell.setCellValue(user.getUserId());
+
+            cell = row.createCell(1);
+            cell.setCellValue(user.getFirstName());
+
+            cell = row.createCell(2);
+            cell.setCellValue(user.getLastName());
+
+            cell = row.createCell(3);
+            cell.setCellValue(user.getEmail());
+
+            cell = row.createCell(4);
+            cell.setCellValue(user.getPhoneNumber());
+
+            // write the updated workbook back to the file
+            FileOutputStream outputStream = new FileOutputStream("resources/Members.xlsx");
+            workbook.write(outputStream);
+            workbook.close();
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public User findUserByName(String userId) {
+        for (User user : users) {
+            if (user.getUserId().equals(userId)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    public Book findBookByName(String bookName) {
+        for (Book book : catalog) {
+            if (book.getTitle().equals(bookName)) {
+                return book;
+            }
+        }
+        return null; // book not found
+    }
+
 }
 
 

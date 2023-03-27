@@ -1,7 +1,9 @@
 package com.libraryhhs;
 
+import java.io.IOException;
+
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Program program = new Program();
         program.start();
     }

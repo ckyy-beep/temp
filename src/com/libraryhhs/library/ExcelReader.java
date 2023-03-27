@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import com.libraryhhs.item.Book;
+import com.libraryhhs.user.User;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -85,6 +86,37 @@ public class ExcelReader {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void readExcelFileMembers(String fileName, String sheetName, ArrayList<User> users) {
+
+        try (Workbook workbook = new XSSFWorkbook(new File(fileName))) {
+            Sheet sheet = workbook.getSheet(sheetName);
+
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                Row currentRow = sheet.getRow(i);
+                DataFormatter formatter = new DataFormatter();
+                String userID = formatter.formatCellValue(currentRow.getCell(0));
+                String firstname = formatter.formatCellValue(currentRow.getCell(1));
+                String lastname = formatter.formatCellValue(currentRow.getCell(2));
+                String email = formatter.formatCellValue(currentRow.getCell(3));
+                String phonenumber = formatter.formatCellValue(currentRow.getCell(4));
+
+//                System.out.println("UserId              : " + userID);
+//                System.out.println("firstname           : " + firstname);
+//                System.out.println("lastname            : " + lastname);
+//                System.out.println("email               : " + email);
+//                System.out.println("phonenumber         : " + phonenumber);
+
+                User user = new User(userID, firstname, lastname, email, phonenumber);
+                users.add(user);
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidFormatException e) {
+            throw new RuntimeException(e);
         }
     }
 }
