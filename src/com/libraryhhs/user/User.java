@@ -69,6 +69,10 @@ public class User {
 //        borrowingBooks.remove(book);
 //    }
 
+    public void printMe() {
+        System.out.println("This is a user ccount.");
+    }
+
     public boolean returnBorrowedBook(Book book) {
         if (borrowingBooks.contains(book)) {
             borrowingBooks.remove(book);

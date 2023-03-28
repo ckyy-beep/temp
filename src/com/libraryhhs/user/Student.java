@@ -6,6 +6,11 @@ public class Student extends User {
         super(userId, firstName, lastName, email, phoneNumber);
     }
 
+    @Override
+    public void printMe() {
+        System.out.println("This is a student account.");
+    }
+
 
 
 
