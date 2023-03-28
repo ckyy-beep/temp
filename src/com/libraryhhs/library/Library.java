@@ -1,6 +1,9 @@
 package com.libraryhhs.library;
 
 import com.libraryhhs.item.Book;
+import com.libraryhhs.item.CD;
+import com.libraryhhs.item.DVD;
+import com.libraryhhs.item.Manga;
 import com.libraryhhs.user.User;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -15,11 +18,17 @@ import java.util.ArrayList;
 public class Library {
     private String libraryName;
     private static ArrayList<Book> catalog;
+    private static ArrayList<CD> cds;
+    private static ArrayList<DVD> dvds;
+    private static ArrayList<Manga> mangas;
     private ArrayList<User> users;
 
     public Library(String libraryName) {
         this.libraryName = libraryName;
         catalog = new ArrayList<>();
+        cds = new ArrayList<>();
+        dvds = new ArrayList<>();
+        mangas = new ArrayList<>();
         users = new ArrayList<>();
     }
 
@@ -34,6 +43,9 @@ public class Library {
     public ArrayList<Book> getCatalog() {
         return catalog;
     }
+    public ArrayList<CD> getCds() {return cds;}
+    public ArrayList<DVD> getDvds() {return dvds;}
+    public ArrayList<Manga> getMangas() {return mangas;}
     public ArrayList<User> getUsers() {return users;}
 
     public void removeBook(Book book) {
@@ -81,7 +93,7 @@ public class Library {
             }
         }
         if (!bookFound) {
-            System.out.println("No books found containing \"" + author + "\" in the title.");
+            System.out.println("No books found from \"" + author + "\".");
             System.out.println();
         }
     }
@@ -141,6 +153,7 @@ public class Library {
             workbook.write(outputStream);
             workbook.close();
             outputStream.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         }

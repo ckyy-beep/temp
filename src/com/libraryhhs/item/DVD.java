@@ -1,15 +1,25 @@
 package com.libraryhhs.item;
 
-import com.libraryhhs.user.User;
+public class DVD extends LibraryItem {
 
-public class DVD extends LibraryItem implements Borrowable {
+    private String director;
+    private String duration;
+    private String rating;
 
-    public DVD(String title, String author, String year) {
-        super(title, author, year);
+    public DVD(String title, String year, String director, String duration, String rating) {
+        super(title, "(Director)", year,"DVD");
+        this.director = director;
+        this.duration = duration;
+        this.rating = rating;
     }
 
     @Override
-    public void borrow(User user) {
-
+    public String toString() {
+        return  "Title       : " + title    + "\n" +
+                "Director    : " + director + "\n" +
+                "Duration    : " + duration + "\n" +
+                "Rating      : " + rating   + "\n" +
+                "Year        : " + year     + "\n" +
+                "Item Type   : " + itemType + "\n\n";
     }
 }

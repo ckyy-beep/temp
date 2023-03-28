@@ -1,6 +1,9 @@
 package com.libraryhhs;
 
 import com.libraryhhs.item.Book;
+import com.libraryhhs.item.CD;
+import com.libraryhhs.item.DVD;
+import com.libraryhhs.item.Manga;
 import com.libraryhhs.library.ExcelReader;
 import com.libraryhhs.library.Library;
 import com.libraryhhs.user.User;
@@ -32,6 +35,9 @@ public class Program {
         String sheetName = "Sheet1";
         excelReader.readExcelFile(fileName, sheetName, hhs.getCatalog());
         excelReader.readExcelFileMembers("resources/Members.xlsx", "Sheet1", hhs.getUsers());
+        excelReader.readExcelFileCd("resources/Library.xlsx", "cd", hhs.getCds());
+        excelReader.readExcelFileDvd("resources/Library.xlsx", "dvd", hhs.getDvds());
+        excelReader.readExcelFileManga("resources/Library.xlsx", "manga", hhs.getMangas());
 
         //excelReader.writeExcelFile(fileName, sheetName, hhs.getCatalog());
 
@@ -110,6 +116,7 @@ public class Program {
                     System.out.println("Please select an option:");
                     System.out.println("1. Search book by title");
                     System.out.println("2. Search book by author");
+                    System.out.println("3. Back to menu");
 
                     System.out.println();
                     System.out.print("Option: ");
@@ -127,7 +134,7 @@ public class Program {
                         break;
                     }
 
-                    if (option2 < 1 || option2 > 2) {
+                    if (option2 < 1 || option2 > 3) {
                         System.out.println();
                         System.out.println("Invalid.");
                         System.out.println();
@@ -184,6 +191,8 @@ public class Program {
                                 System.out.println("Invalid input. Please enter 'y' or 'n'.");
                             }
                             running = false;
+                        case 3:
+                            break;
                     }
                     break;
 
@@ -201,7 +210,7 @@ public class Program {
                     }
 
                     System.out.println("Found you.");
-                    System.out.println("Please enter the book name you would like to borrow: ");
+                    System.out.println("Please enter the name of the book that you would like to borrow: ");
                     String bookName = scanner.nextLine();
                     Book book = hhs.findBookByName(bookName);
 
@@ -457,7 +466,11 @@ public class Program {
                     System.out.println("2. Remove book (in production)");
                     System.out.println("3. Add user");
                     System.out.println("4. Remove user (in production)");
-                    System.out.println("5. Back to menu");
+                    System.out.println("5. Show books");
+                    System.out.println("6. Show CD's");
+                    System.out.println("7. Show dvds");
+                    System.out.println("8. Show mangas");
+                    System.out.println("9. Back to menu");
 
                     System.out.println();
                     System.out.print("Option: ");
@@ -468,7 +481,8 @@ public class Program {
                         option3 = scanner.nextInt();
                     } catch (InputMismatchException e) {
                         // User entered a non-integer value
-                        System.out.println("Invalid input. Please enter a number.");
+                        System.out.println();
+                        System.out.println("Invalid input.");
                         System.out.println();
                         scanner.next(); // Clear the scanner buffer
                         continue; // Go back to the start of the loop
@@ -605,11 +619,34 @@ public class Program {
                                 continue;
                             }
                         case 5:
+                            for (Book boek: hhs.getCatalog()) {
+                                System.out.println(boek.toString());
+                            }
+                            continue;
+                        case 6:
+                            for (CD cd: hhs.getCds()) {
+                                System.out.println(cd.toString());
+                            }
+                            continue;
+                        case 7:
+                            for (DVD dvd: hhs.getDvds()) {
+                                System.out.println(dvd.toString());
+                            }
+                            continue;
+                        case 8:
+                            for (Manga manga: hhs.getMangas()) {
+                                System.out.println(manga.toString());
+                            }
+                            continue;
+                        case 9:
                             continue;
                         default:
                             System.out.println();
                             System.out.println("Invalid option. Please try again.");
+                            System.out.println();
+                            break;
                     }
+                    continue;
 
                 case 6:
                     running = false;

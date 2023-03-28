@@ -2,7 +2,7 @@ package com.libraryhhs.item;
 
 import com.libraryhhs.user.User;
 
-public class Book extends LibraryItem implements Borrowable {
+public class Book extends LibraryItem {
     private String subtitle;
     private String Isbn;
     private String publisher;
@@ -14,7 +14,7 @@ public class Book extends LibraryItem implements Borrowable {
 
     public Book(String title, String author, String subtitle, String ISBN, String publisher, String publicationYear,
                 String publicationMonth, String publicationDay, String genre, String language, int inventory) {
-        super(title, author, publicationYear);
+        super(title, author, publicationYear, "Book");
         this.subtitle = subtitle;
         this.Isbn = ISBN;
         this.publisher = publisher;
@@ -23,11 +23,6 @@ public class Book extends LibraryItem implements Borrowable {
         this.genre = genre;
         this.language = language;
         this.inventory = inventory;
-    }
-
-    @Override
-    public void borrow(User user) {
-        // Implement borrow method for books
     }
 
     public void printInformation() {
@@ -61,7 +56,6 @@ public class Book extends LibraryItem implements Borrowable {
         System.out.println();
 
     }
-
 
     // Getters and setters
     public String getSubtitle() {
@@ -111,11 +105,16 @@ public class Book extends LibraryItem implements Borrowable {
         this.inventory = inventory;
     }
 
-//    @Override
-//    public String toString() {
-//        return "Book [title=" + title + ", author=" + author + ", subtitle=" + subtitle + ", ISBN=" + Isbn
-//                + ", publisher=" + publisher + ", publicationYear=" + year + ", publicationMonth="
-//                + publicationMonth + ", publicationDate=" + publicationDay + ", genre=" + genre + ", language="
-//                + language + ", inventory=" + inventory + "]";
-//    }
+    @Override
+    public String toString() {
+        return  "Title        : " + title          + "\n" +
+                "Subtitle     : " + subtitle       + "\n" +
+                "Author       : " + author         + "\n" +
+                "ISBN         : " + Isbn           + "\n" +
+                "Publisher    : " + publisher      + "\n" +
+                "Publish date : " + publicationDay + " " + publicationMonth + " " + year + "\n" +
+                "Genre        : " + genre          + "\n" +
+                "Language     : " + language       + "\n" +
+                "Item Type    : " + itemType       + "\n\n";
+    }
 }

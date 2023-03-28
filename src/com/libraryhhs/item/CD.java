@@ -1,15 +1,22 @@
 package com.libraryhhs.item;
 
-import com.libraryhhs.user.User;
+public class CD extends LibraryItem {
 
-public class CD extends LibraryItem implements Borrowable {
+    private String artist;
+    private int numTracks;
 
-    public CD(String title, String author, String year) {
-        super(title, author, year);
+    public CD(String title, String year, String singer, int numTracks) {
+        super(title, "(singer)", year, "CD");
+        this.artist = singer;
+        this.numTracks = numTracks;
     }
 
     @Override
-    public void borrow(User user) {
-
+    public String toString() {
+        return  "Title         : "  + title     + "\n" +
+                "Artist        : "  + artist    + "\n" +
+                "# of tracks   : "  + numTracks + "\n" +
+                "Year          : "  + year      + "\n" +
+                "Item Type     : "  + itemType  + "\n\n";
     }
 }

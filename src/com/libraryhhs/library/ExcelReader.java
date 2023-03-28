@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import com.libraryhhs.item.Book;
+import com.libraryhhs.item.CD;
+import com.libraryhhs.item.DVD;
+import com.libraryhhs.item.Manga;
 import com.libraryhhs.user.User;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
@@ -115,6 +118,79 @@ public class ExcelReader {
                 }
 
                 users.add(user);
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidFormatException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void readExcelFileCd(String fileName, String sheetName, ArrayList<CD> cds) {
+
+        try (Workbook workbook = new XSSFWorkbook(new File(fileName))) {
+            Sheet sheet = workbook.getSheet(sheetName);
+
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                Row currentRow = sheet.getRow(i);
+                DataFormatter formatter = new DataFormatter();
+                String title = formatter.formatCellValue(currentRow.getCell(0));
+                String artist = formatter.formatCellValue(currentRow.getCell(1));
+                int numberOfTracks = (int) currentRow.getCell(2).getNumericCellValue();
+                String year = formatter.formatCellValue(currentRow.getCell(3));
+
+                CD cd = new CD(title, year, artist, numberOfTracks);
+                cds.add(cd);
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidFormatException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void readExcelFileDvd(String fileName, String sheetName, ArrayList<DVD> dvds) {
+
+        try (Workbook workbook = new XSSFWorkbook(new File(fileName))) {
+            Sheet sheet = workbook.getSheet(sheetName);
+
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                Row currentRow = sheet.getRow(i);
+                DataFormatter formatter = new DataFormatter();
+                String title = formatter.formatCellValue(currentRow.getCell(0));
+                String director = formatter.formatCellValue(currentRow.getCell(1));
+                String duration = formatter.formatCellValue(currentRow.getCell(2));
+                String rating = formatter.formatCellValue(currentRow.getCell(3));
+                String year = formatter.formatCellValue(currentRow.getCell(4));
+
+                DVD dvd = new DVD(title, year, director, duration, rating);
+                dvds.add(dvd);
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidFormatException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void readExcelFileManga(String fileName, String sheetName, ArrayList<Manga> mangas) {
+
+        try (Workbook workbook = new XSSFWorkbook(new File(fileName))) {
+            Sheet sheet = workbook.getSheet(sheetName);
+
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                Row currentRow = sheet.getRow(i);
+                DataFormatter formatter = new DataFormatter();
+                String title = formatter.formatCellValue(currentRow.getCell(0));
+                String author = formatter.formatCellValue(currentRow.getCell(1));
+                String numberOfVolumes = formatter.formatCellValue(currentRow.getCell(2));
+                String year = formatter.formatCellValue(currentRow.getCell(3));
+
+                Manga manga = new Manga(title, author, numberOfVolumes, year);
+                mangas.add(manga);
 
             }
         } catch (IOException e) {

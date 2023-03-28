@@ -4,25 +4,17 @@ public class LibraryItem {
     protected String title;
     protected String author;
     protected String year;
-    protected boolean borrowed;
-    protected String borrower;
+    protected String itemType;
+//    protected boolean borrowed;
+//    protected String borrower;
 
-    public LibraryItem(String title, String author, String year) {
+    public LibraryItem(String title, String author, String year, String itemType) {
         this.title = title;
         this.author = author;
         this.year = year;
-        borrowed = false;
-        borrower = null;
-    }
-
-    public void returnItem() {
-        if (borrowed) {
-            System.out.println(getTitle() + " has been returned to the library.");
-            borrowed = false;
-            borrower = null;
-        } else {
-            System.out.println(getTitle() + " was not borrowed.");
-        }
+        this.itemType = itemType;
+//        borrowed = false;
+//        borrower = null;
     }
 
     public void setTitle(String title) {this.title = title;}
@@ -35,4 +27,21 @@ public class LibraryItem {
     public String getPublicationYear() {
         return year;
     }
+
+    public String toString() {
+        return  "Title    : " + title    + "\n" +
+                "Author   : " + author   + "\n" +
+                "Year     : " + year     + "\n" +
+                "Item Type: " + itemType + "\n\n";
+    }
 }
+
+//    public void returnItem() {
+//        if (borrowed) {
+//            System.out.println(getTitle() + " has been returned to the library.");
+//            borrowed = false;
+//            borrower = null;
+//        } else {
+//            System.out.println(getTitle() + " was not borrowed.");
+//        }
+//    }
